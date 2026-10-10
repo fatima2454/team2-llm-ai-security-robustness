@@ -12,7 +12,7 @@ Current Scope
 - AWS EC2
 - Ollama
 - gpt-oss-20b
-- Second model: TBD
+- Second model: Gemma 2 27B
 - Four direct prompt injection techniques
 - Two indirect prompt injection techniques
 - Attack Success Rate and refusal rate analysis
