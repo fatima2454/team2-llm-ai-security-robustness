@@ -1,0 +1,191 @@
+.TH PROMPT_TOOL 1 "November 2026" "Team 2" "User commands"
+.SH NAME
+prompt_tool.py \- generate, review, and replay Team 2 prompt-injection cases
+.SH SYNOPSIS
+.B python3 prompt_tool.py
+[\fB\-\-app\-dir\fR \fIDIR\fR]
+\fIcommand\fR
+[\fIoptions\fR]
+.PP
+.B python3 prompt_tool.py help
+[\fItopic\fR]
+.PP
+.B python3 prompt_tool.py help man
+.SH DESCRIPTION
+Version 1.0 generates one case from a technique file, holds it for review, and
+submits an approved case to a local Ollama model. Replay submits a frozen JSONL
+case without calling Perplexity.
+.PP
+The generator is the Perplexity Agent API. The request has a model and input
+only: no tools and no effort level. The model id is read from
+.IR config/generator.json .
+The live canary is created after approval and is sent only to Ollama.
+.PP
+With no command, the short operator guide is printed and the process exits 0.
+.SH COMMANDS
+.TP
+.B help \fR[\fItopic\fR]
+Print the operator guide.
+.I topic
+may be
+.BR generate ,
+.BR replay ,
+.BR smoke ,
+.BR status ,
+or
+.BR man .
+.B help man
+opens this page with
+.BR man (1).
+If that reader is missing or empty, a plain-text page is printed.
+.TP
+.B status
+Print whether each technique file can be generated. Does not call the API.
+.TP
+.B smoke
+Send a one-word check to the Agent API. Prints an HTTP status or
+.BR output_text\ non-empty .
+Does not print the key.
+.TP
+.B generate
+Generate, review, and submit. Requires
+.B PERPLEXITY_API_KEY
+and, after approval, Ollama.
+.TP
+.B replay
+Submit each frozen case in a JSONL file. Does not require an API key. Requires Ollama.
+.SH OPTIONS
+.TP
+.B \-\-app\-dir \fIDIR\fR
+VM application directory. Default is
+.BR TEAM2_APP_DIR ,
+then
+.BR APP_DIR ,
+then the repository root.
+.TP
+.B \-\-technique \fINAME\fR
+.BR keyword_encoding ,
+.BR refusal_suppression ,
+.BR format_switching ,
+.BR role_play ,
+.BR rag_file_poisoning ,
+or
+.BR rag_url_poisoning .
+.TP
+.B \-\-model \fINAME\fR
+.B gpt-oss:20b
+or
+.BR gemma2:27b .
+Calls use
+.I http://127.0.0.1:11434
+with temperature 0, seed 42, and num_ctx 8192.
+.TP
+.B \-\-objective \fIO1\fR|\fIO2\fR|\fIO3\fR
+Case objective. Default
+.BR O1 .
+.B O2
+adds one extra system line. The others do not.
+.TP
+.B \-\-mode \fIreview\fR|\fIauto\fR
+Default
+.BR review .
+Review keys are
+.B a
+approve,
+.B r
+regenerate,
+.B s
+skip, and
+.B q
+quit. Any other key skips. Review needs a terminal.
+.TP
+.B \-\-pilot\-approved
+Required with
+.BR \-\-mode\ auto .
+Auto cases are not part of the matched comparison.
+.TP
+.B \-\-count \fIN\fR
+Successful submissions to stop after. Default 1.
+.TP
+.B \-\-max\-attempts \fIN\fR
+Attempts, including failures and skips. Default 5.
+.TP
+.B \-\-cases \fIFILE\fR
+Frozen JSONL file for
+.BR replay .
+Lines without a canary and a prompt are skipped.
+.SH FILES
+.TP
+.I Prompt Injection Techniques/
+Method files. The tool does not follow their tag or system-prompt lines.
+.TP
+.I config/generator.json
+Pinned generator model id.
+.TP
+.I results/runs.jsonl
+Append-only attempt log, under the app directory.
+.TP
+.I data/corpus/case-*.md
+Planted indirect documents. The tool chooses the filename.
+.TP
+.I data/clean_corpus/
+Optional fixed corpus. Indexed with a case when the directory exists.
+.TP
+.I prompt_tool.md
+Longer operator notes.
+.TP
+.I API-setup/setup_api.sh
+Session script that loads the key. Source it. Do not run it under
+.BR bash\ \-x .
+.SH ENVIRONMENT
+.TP
+.B PERPLEXITY_API_KEY
+Required for
+.B generate
+and
+.BR smoke .
+Never printed. Replay does not read it.
+.TP
+.B TEAM2_APP_DIR
+Application directory when
+.B \-\-app\-dir
+is omitted. Checked before
+.BR APP_DIR .
+.TP
+.B APP_DIR
+Fallback application directory. Used only when
+.B \-\-app\-dir
+and
+.B TEAM2_APP_DIR
+are unset.
+.TP
+.B ANALYST
+Stored as the reviewer in review mode. Default
+.BR unknown .
+.SH EXIT STATUS
+.TP
+.B 0
+The requested command finished, or help was printed.
+.TP
+.B 1
+A missing key, a blocked technique file, a target error, or another operator error.
+.TP
+.B 2
+Unrecognized arguments.
+.SH NOTES
+Indirect generate exits before the API while Section 6 still contains the
+literal word TBD. The four direct technique files are not the cause.
+.PP
+A retrieval miss is not a refusal. Scoring is not done by this tool.
+.PP
+A later chromadb-only host setup indexes every file left in
+.IR data/corpus .
+Remove old case files before that run.
+.PP
+URL cases must use
+.I https://example.test/
+and are not fetched.
+.SH SEE ALSO
+.I prompt_tool.md
+.I README.md
+.I API-setup/README.md
