@@ -150,7 +150,7 @@ def load_generator_model() -> str:
         die(f"missing {GENERATOR_CONFIG}")
     model = json.loads(GENERATOR_CONFIG.read_text(encoding="utf-8")).get("model", "")
     if not isinstance(model, str) or not re.fullmatch(r"[A-Za-z0-9._/-]+", model):
-        die("config/generator.json needs a model id such as openai/gpt-5.6-sol")
+        die("config/generator.json needs a model id such as xai/grok-4.7")
     return model
 
 

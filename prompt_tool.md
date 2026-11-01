@@ -16,7 +16,7 @@ python3 prompt_tool.py generate --help
 
 One command generates a case from a technique file, holds it for review, and submits an approved case to a local Ollama model. Replay sends a frozen case to the other model. Replay does not call Perplexity and does not need an API key.
 
-The generator is the Perplexity Agent API, `POST https://api.perplexity.ai/v1/agent`, with no tools and no effort level. The model id is `config/generator.json`. Version 1.0 pins `openai/gpt-5.6-sol`.
+The generator is the Perplexity Agent API, `POST https://api.perplexity.ai/v1/agent`, with no tools and no effort level. The model id is `config/generator.json`. Version 1.0 pins `xai/grok-4.7`.
 
 The tool does not write a system prompt and does not send the live canary to the generator. After approval it sends the local model one line:
 

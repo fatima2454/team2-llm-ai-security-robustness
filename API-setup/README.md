@@ -39,7 +39,7 @@ source API-setup/setup_api.sh
 | `HTTP 401` | The key is missing, revoked, or not in the `Authorization: Bearer` header. Create a new key. Do not paste the old one into chat ([FAQ](https://docs.perplexity.ai/docs/resources/faq.md)). |
 | `HTTP 402` | API credits are exhausted. Add credits in the [billing console](https://console.perplexity.ai/project/billing). API credits are separate from Computer credits ([API platform](https://www.perplexity.ai/help-center/en/articles/10354842-what-is-the-perplexity-api-platform)). |
 | `HTTP 429` | Wait for the `Retry-After` value the script prints, then run `--check` again ([rate limits](https://docs.perplexity.ai/docs/admin/rate-limits-usage-tiers.md)). |
-| `HTTP 400` | The smoke-test model id is stale. Set `PPLX_SMOKE_MODEL` to an id from the [models page](https://docs.perplexity.ai/docs/agent-api/models.md). The default is `openai/gpt-5.6-sol`. |
+| `HTTP 400` | The smoke-test model id is stale. Set `PPLX_SMOKE_MODEL` to an id from the [models page](https://docs.perplexity.ai/docs/agent-api/models.md). The default is `xai/grok-4.7`. |
 | Check hangs, then fails | Outbound HTTPS to `api.perplexity.ai` is blocked, or the call exceeded 180 seconds. Confirm egress on port 443. |
 | Key appears in the terminal | Stop. You used `bash -x`, `echo`, or `env`. Rotate the key in the [API Console](https://console.perplexity.ai/project/keys), update SSM, and do not commit the scrollback. |
 

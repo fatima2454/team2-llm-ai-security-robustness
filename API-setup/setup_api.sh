@@ -16,7 +16,7 @@
 
 API_URL="https://api.perplexity.ai/v1/agent"
 SSM_NAME="${PPLX_SSM_PARAMETER:-/team2/perplexity/api-key}"
-SMOKE_MODEL="${PPLX_SMOKE_MODEL:-openai/gpt-5.6-sol}"
+SMOKE_MODEL="${PPLX_SMOKE_MODEL:-xai/grok-4.7}"
 
 if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
   _SOURCED=1
@@ -104,7 +104,7 @@ Usage:
 Environment:
   PERPLEXITY_API_KEY   Used as-is when already set. Never printed.
   PPLX_SSM_PARAMETER   SSM name. Default: /team2/perplexity/api-key
-  PPLX_SMOKE_MODEL     Smoke-test model. Default: openai/gpt-5.6-sol
+  PPLX_SMOKE_MODEL     Smoke-test model. Default: xai/grok-4.7
   AWS_REGION           Must match the region of the SSM parameter.
 EOF
       if [[ $_SOURCED -eq 1 ]]; then
