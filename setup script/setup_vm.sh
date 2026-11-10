@@ -53,14 +53,27 @@ fi
 [[ -d /run/systemd/system ]] || { echo "A systemd VM is required." >&2; exit 1; }
 as_user() { sudo -u "$APP_USER" env HOME="$USER_HOME" "$@"; }
 export DEBIAN_FRONTEND=noninteractive
-apt-get update
-apt-get install -y --no-install-recommends ca-certificates curl python3 python3-venv python3-pip
+# Fresh VMs often run unattended-upgrades at boot; wait for the dpkg lock instead of failing.
+APT_OPTS=(-o DPkg::Lock::Timeout=900)
+wait_for_apt() {
+  local waited=0
+  while pgrep -x unattended-upgr >/dev/null || pgrep -x apt-get >/dev/null || pgrep -x dpkg >/dev/null; do
+    (( waited % 60 == 0 )) && echo "Waiting for another package manager process to finish (${waited}s)..."
+    (( waited >= 900 )) && { echo "Package manager still busy after 900s." >&2; return 1; }
+    sleep 5; waited=$((waited + 5))
+  done
+}
+wait_for_apt
+apt-get "${APT_OPTS[@]}" update
+apt-get "${APT_OPTS[@]}" install -y --no-install-recommends ca-certificates curl python3 python3-venv python3-pip
 for d in "$APP_DIR" "$APP_DIR/scripts" "$APP_DIR/config" "$APP_DIR/data" "$APP_DIR/data/corpus" "$APP_DIR/data/chroma"; do
   install -d -m 0750 -o "$APP_USER" -g "$APP_GROUP" "$d"
 done
 if (( ! RAG_ONLY )); then
   if (( ! SKIP_DRIVER )) && ! nvidia-smi >/dev/null 2>&1; then
-    apt-get install -y ubuntu-drivers-common
+    wait_for_apt
+    apt-get "${APT_OPTS[@]}" install -y ubuntu-drivers-common
+    wait_for_apt
     ubuntu-drivers install
     modprobe nvidia || true
     if ! nvidia-smi >/dev/null 2>&1; then
@@ -93,7 +106,7 @@ SERVICE
   systemctl restart ollama
   READY=0
   for i in {1..60}; do
-    if curl -fsS http://127.0.0.1:11434/api/version >/dev/null; then READY=1; break; fi
+    if curl -fsS http://127.0.0.1:11434/api/version >/dev/null 2>&1; then READY=1; break; fi
     sleep 2
   done
   (( READY )) || { echo "Ollama not ready; inspect journalctl -u ollama." >&2; exit 1; }
@@ -106,7 +119,9 @@ SERVICE
 fi
 VENV="$APP_DIR/venv"
 [[ -x "$VENV/bin/python" ]] || as_user python3 -m venv "$VENV"
-if [[ ! -f "$APP_DIR/config/requirements-installed.txt" || -n "${CHROMADB_VERSION:-}${REQUESTS_VERSION:-}" ]]; then
+# Check the venv itself; a stale requirements-installed.txt must not skip installation.
+if ! as_user "$VENV/bin/python" -c "import chromadb, requests" >/dev/null 2>&1 \
+   || [[ -n "${CHROMADB_VERSION:-}${REQUESTS_VERSION:-}" ]]; then
   CHROMA_SPEC=chromadb; REQUESTS_SPEC=requests
   [[ -z "${CHROMADB_VERSION:-}" ]] || CHROMA_SPEC="chromadb==$CHROMADB_VERSION"
   [[ -z "${REQUESTS_VERSION:-}" ]] || REQUESTS_SPEC="requests==$REQUESTS_VERSION"
