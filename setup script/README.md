@@ -1,4 +1,4 @@
-# LLM Security Lab: VM Setup Guide
+# VM Setup Guide for Replicating Project
 
 Automated environment setup for the Team 2 CYB691 capstone project, **LLM and AI Security Robustness**.
 
