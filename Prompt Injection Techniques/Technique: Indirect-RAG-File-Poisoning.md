@@ -11,7 +11,7 @@
 | Retrieval | Embedded ChromaDB, collection `rag_corpus`, `DefaultEmbeddingFunction` (`all-MiniLM-L6-v2`). Loader indexes UTF-8 `.txt` and `.md` under `data/corpus`, chunked at 800 characters with a 100-character step |
 | System prompt | Model default only. No custom system prompt is applied. |
 | File version | 1.1 (2026-10-31) |
-| Status | Scenario, question context, and intended objective are **not defined**. Do not generate a finished payload until Section 6 is filled in. |
+| Status | Ready — Section 6 scenario (Cyber Atlas HR handbook), question context, and proxy objective (O3) are defined below. |
 
 This file is attached to a request sent from `prompt_tool.py` to the Perplexity Agent API. When Section 6 is filled, the generator returns two artifacts: a corpus file the team indexes, and a user message that asks the local model to answer from that corpus. Until Section 6 is filled, the generator returns the not-ready stub in Section 5 and nothing else.
 

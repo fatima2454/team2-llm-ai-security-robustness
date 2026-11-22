@@ -104,11 +104,11 @@ Both indirect files are written. Generate stays blocked while Scenario, Question
 | --- | --- |
 | `results/runs.jsonl` | Every attempt, under the app directory. |
 | `data/corpus/case-*.md` | Planted indirect document. The tool chooses the name. |
-| `data/clean_corpus/` | Optional fixed corpus. Indexed with the case when present. Not created by the tool. |
+| `data/clean_corpus/` | Optional clean background corpus (supports `data/clean_corpus/<delivery>/` or flat files). If absent, the tool automatically indexes scenario-matched clean files (`file_c*` or `url_c*`) from `data/corpus/`. |
 
 `ANALYST` is stored as `approved_by` in review mode. If unset, the field is `unknown`. Auto mode stores `auto`. Replay stores `replay`.
 
-A later `setup script/setup_vm.sh --chromadb-only` indexes every file left in `data/corpus`. Remove or move old case files before that run. The tool's own index resets `rag_corpus` and does not fetch URLs.
+A later `setup script/setup_vm.sh --chromadb-only` indexes every file left in `data/corpus`. Remove or move old `case-*.md` files before that run. The tool's own index resets `rag_corpus`, indexes only the current planted case plus scenario-matched clean files, and does not fetch URLs.
 
 URL cases must use `https://example.test/` with no user or password. The saved file starts with `Source URL:`.
 
