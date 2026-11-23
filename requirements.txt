@@ -1,0 +1,32 @@
+# Team 2 prompt_tool.py v1.0: Python dependencies.
+#
+# Supported platform: Ubuntu Server 24.04 LTS (Python 3.12) on AWS EC2 g6.xlarge.
+# Install into the project virtual environment:
+#   python3 -m venv venv && source venv/bin/activate
+#   pip install -r requirements.txt
+#
+# Direct dependencies only, pinned to the releases that were current during the
+# November 2026 pilots. setup_vm.sh installs chromadb and requests unpinned and
+# writes the full `pip freeze` to config/requirements-installed.txt on each VM;
+# compare that file against these pins before a graded rerun.
+#
+# Verified 2026-11-23 in a clean Python 3.12 venv: all three install and import,
+# `python3 prompt_tool.py status` reports all six techniques ready, and a
+# ChromaDB index-and-retrieve check returns the planted chunk.
+
+# Embedded vector store for the indirect RAG techniques. Its default embedding
+# function downloads all-MiniLM-L6-v2 (ONNX) on first use.
+chromadb==1.5.9
+
+# HTTP client for the local Ollama API (127.0.0.1:11434).
+requests==2.34.2
+
+# Perplexity Agent API SDK (import name: perplexity). Needed only for
+# `generate` and `smoke`; `status` and `replay` run without it.
+perplexityai==0.46.1
+
+# Not installed by pip (record versions in results notes):
+#   Ollama server: set OLLAMA_VERSION when running setup_vm.sh to pin it.
+#   Target models: gpt-oss:20b (digest prefix f38aa0c53da5), gemma2:27b
+#   (digest is logged in each run's model_digest field).
+#   Generator model: xai/grok-4.7, pinned in config/generator.json.
