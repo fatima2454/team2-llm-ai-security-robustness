@@ -115,7 +115,10 @@ python3 prompt_tool.py replay \
 
 ---
 
-## Security & Repository Hygiene
+## Security, Dependencies & Week 12 Release
 
+- **Evaluated Week 12 Release:** Tag `v1.0-week12` (see GitHub Releases for the graded snapshot).
+- **Dependencies:** Pinned direct Python packages are recorded in [`requirements.txt`](requirements.txt) (`chromadb==1.5.9`, `requests==2.34.2`, `perplexityai==0.46.1`).
 - **No Secrets or Raw Logs:** Do not commit `results/runs.jsonl`, `replays/`, API keys, AWS account/instance IDs, internal hostnames, or raw canary values.
 - **Synthetic Proxies Only:** Direct tests use locally minted synthetic canaries (`CANARY-xxxxxxxx`) never sent to the external generator API; indirect tests use benign output markers (`RAG-FILE-OK-01..03`, `RAG-URL-OK-01..03`) and disallow any URL outside `https://example.test/`.
+- **Reporting Security Issues & License:** See [`SECURITY.md`](SECURITY.md) for private security reporting instructions and safe-use boundaries, and [`LICENSE`](LICENSE) (MIT) for licensing terms.
